@@ -15,27 +15,23 @@
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;height:100%;}
-  body{
-    background:var(--bg); color:var(--ink);
+  body{ background:var(--bg); color:var(--ink);
     font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;
-    -webkit-font-smoothing:antialiased;
-    padding-bottom:env(safe-area-inset-bottom);
-  }
+    -webkit-font-smoothing:antialiased; }
+  .view{display:none;}
+  .view.active{display:block; min-height:100vh;}
 
   /* header */
-  header{
-    position:sticky; top:0; z-index:5;
-    background:var(--yellow);
+  header{ position:sticky; top:0; z-index:5; background:var(--yellow);
     padding:calc(env(safe-area-inset-top) + 14px) 20px 14px;
     display:flex; align-items:center; justify-content:space-between;
-    border-bottom-left-radius:18px; border-bottom-right-radius:18px;
-  }
-  .menu-btn{font-size:22px; line-height:1; background:none; border:none; color:var(--ink); padding:6px; cursor:pointer;}
+    border-bottom-left-radius:18px; border-bottom-right-radius:18px; }
+  .icon-btn{font-size:22px; line-height:1; background:none; border:none; color:var(--ink); padding:6px; cursor:pointer;}
   .title{font-size:15px; font-weight:600; letter-spacing:.3px; opacity:.85;}
   .paw{font-size:20px;}
 
   /* timeline */
-  main{padding:8px 18px 120px; max-width:560px; margin:0 auto;}
+  main{padding:8px 18px 130px; max-width:560px; margin:0 auto;}
   .year{ text-align:center; color:var(--soft); font-size:13px; margin:26px 0 14px;
     display:flex; align-items:center; gap:12px;}
   .year::before,.year::after{content:""; flex:1; height:1px; background:var(--line);}
@@ -48,180 +44,265 @@
   .entry:last-child::after{display:none;}
   .date{font-size:13px; color:var(--soft); margin-bottom:8px;}
   .card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-    padding:16px 16px 14px; box-shadow:0 1px 0 rgba(0,0,0,.02);}
-  .meta{font-size:12px; color:var(--soft); margin-bottom:8px; display:flex; gap:10px; flex-wrap:wrap;}
-  .text{font-size:16px; line-height:1.7; white-space:pre-wrap; word-break:break-word;}
-  .photo{margin-top:12px; width:100%; border-radius:12px; display:block;}
+    padding:14px 15px; box-shadow:0 1px 0 rgba(0,0,0,.02); cursor:pointer;
+    display:flex; gap:12px; align-items:flex-start;}
+  .card .body{flex:1; min-width:0;}
+  .meta{font-size:12px; color:var(--soft); margin-bottom:6px; display:flex; gap:10px; flex-wrap:wrap;}
+  .text{font-size:15px; line-height:1.65; white-space:pre-wrap; word-break:break-word;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
+  .text.empty{color:var(--soft); font-style:normal;}
+  .thumb{width:62px;height:62px;border-radius:10px;object-fit:cover; flex-shrink:0; background:var(--bg);}
 
   /* empty */
-  .empty{ text-align:center; color:var(--soft); padding:90px 30px;}
-  .empty .big{font-size:46px; margin-bottom:14px;}
-  .empty p{font-size:15px; line-height:1.7; margin:4px 0;}
+  .empty-state{ text-align:center; color:var(--soft); padding:80px 30px;}
+  .empty-state .big{font-size:46px; margin-bottom:14px;}
+  .empty-state p{font-size:15px; line-height:1.7; margin:4px 0;}
 
-  /* FAB */
+  /* FAB / walking pill */
   .fab{ position:fixed; right:22px; bottom:calc(26px + env(safe-area-inset-bottom));
-    width:62px;height:62px;border-radius:50%; background:var(--dark); color:#fff;
-    border:none; font-size:26px; box-shadow:0 6px 18px rgba(0,0,0,.22);
+    width:64px;height:64px;border-radius:50%; background:var(--dark); color:#fff;
+    border:none; box-shadow:0 6px 18px rgba(0,0,0,.22);
     display:flex;align-items:center;justify-content:center; cursor:pointer; z-index:8;}
+  .fab svg{width:26px;height:26px;}
   .fab:active{transform:scale(.94);}
+  .pill{ position:fixed; right:22px; bottom:calc(26px + env(safe-area-inset-bottom));
+    background:var(--accent); color:#fff; border:none; border-radius:30px;
+    padding:16px 22px; font-size:16px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.22);
+    display:none; align-items:center; gap:10px; cursor:pointer; z-index:8; font-variant-numeric:tabular-nums;}
+  .pill .dot{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1.4s infinite;}
+  @keyframes blink{50%{opacity:.3;}}
 
-  /* sheet */
-  .scrim{ position:fixed; inset:0; background:rgba(0,0,0,.32); z-index:20;
-    opacity:0; pointer-events:none; transition:opacity .22s;}
-  .scrim.show{opacity:1; pointer-events:auto;}
-  .sheet{ position:fixed; left:0;right:0;bottom:0; z-index:21;
-    background:var(--bg); border-top-left-radius:22px;border-top-right-radius:22px;
-    padding:20px 20px calc(20px + env(safe-area-inset-bottom));
-    transform:translateY(100%); transition:transform .26s cubic-bezier(.2,.8,.2,1);
-    max-width:560px; margin:0 auto;}
-  .sheet.show{transform:translateY(0);}
-  .grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 16px;}
-  .sheet h2{font-size:17px;margin:0 0 14px;font-weight:600;}
+  /* timer view */
+  #timer{background:var(--bg); display:none; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px 30px calc(60px + env(safe-area-inset-bottom));}
+  #timer.active{display:flex;}
+  .timer-dog{font-size:64px; margin-bottom:8px;}
+  .timer-hint{color:var(--soft); font-size:15px; margin-bottom:30px; line-height:1.6;}
+  .timer-clock{font-size:60px; font-weight:300; letter-spacing:1px; font-variant-numeric:tabular-nums; margin-bottom:8px;}
+  .timer-start{color:var(--soft); font-size:13px; margin-bottom:48px;}
+  .btn-end{ background:var(--dark); color:#fff; border:none; border-radius:18px;
+    padding:18px 0; width:100%; max-width:300px; font-size:17px; font-weight:600; cursor:pointer; font-family:inherit;}
+  .btn-cancel{ background:none; border:none; color:var(--soft); font-size:14px; margin-top:20px; cursor:pointer;}
+
+  /* detail view */
+  #detail{background:var(--bg);}
+  .topbar{ position:sticky; top:0; background:var(--bg); z-index:5;
+    padding:calc(env(safe-area-inset-top) + 12px) 18px 12px; display:flex; align-items:center; gap:6px;
+    border-bottom:1px solid var(--line);}
+  .back{font-size:16px; background:none;border:none;color:var(--ink); cursor:pointer; padding:6px;}
+  .detail-body{padding:20px 20px calc(40px + env(safe-area-inset-bottom)); max-width:560px; margin:0 auto;}
+  .detail-date{font-size:20px; font-weight:600; margin-bottom:6px;}
+  .detail-meta{font-size:13px; color:var(--soft); margin-bottom:20px; display:flex; gap:14px; flex-wrap:wrap;}
   textarea{ width:100%; min-height:120px; resize:none; border:1px solid var(--line);
     border-radius:14px; padding:14px; font-size:16px; line-height:1.7; background:var(--card);
     font-family:inherit; color:var(--ink);}
   textarea:focus{outline:none;border-color:var(--accent);}
-  .row{display:flex; gap:10px; align-items:center; margin-top:14px;}
+  .photo-full{width:100%; border-radius:14px; margin-top:14px; display:block;}
+  .add-row{display:flex; gap:10px; margin-top:14px;}
   .chip{ border:1px solid var(--line); background:var(--card); border-radius:12px;
-    padding:11px 14px; font-size:14px; color:var(--ink); cursor:pointer; display:flex; gap:7px; align-items:center;}
+    padding:11px 14px; font-size:14px; color:var(--ink); cursor:pointer; display:inline-flex; gap:7px; align-items:center;}
   .chip input{display:none;}
-  .dur{ width:70px; text-align:center; border:1px solid var(--line); border-radius:12px;
-    padding:11px 8px; font-size:14px; background:var(--card); font-family:inherit; color:var(--ink);}
-  .preview{position:relative; margin-top:12px; display:none;}
-  .preview img{width:100%; border-radius:12px; display:block;}
-  .preview .x{position:absolute; top:8px; right:8px; background:rgba(0,0,0,.55); color:#fff;
-    border:none; width:28px;height:28px;border-radius:50%; font-size:15px; cursor:pointer;}
-  .actions{display:flex; gap:12px; margin-top:18px;}
-  .btn{flex:1; padding:15px; border-radius:14px; font-size:16px; border:none; cursor:pointer; font-family:inherit;}
-  .btn.cancel{background:var(--card); border:1px solid var(--line); color:var(--soft);}
-  .btn.save{background:var(--accent); color:#fff; font-weight:600;}
-  .btn.save:disabled{opacity:.45;}
+  .save-btn{ width:100%; margin-top:24px; padding:16px; border-radius:14px; border:none;
+    background:var(--accent); color:#fff; font-size:16px; font-weight:600; cursor:pointer; font-family:inherit;}
+  .del-btn{ width:100%; margin-top:14px; padding:12px; border:none; background:none;
+    color:#c98b8b; font-size:14px; cursor:pointer; font-family:inherit;}
 </style>
 </head>
 <body>
+
+<!-- ===== HOME ===== -->
+<div id="home" class="view active">
   <header>
-    <button class="menu-btn" id="menu" aria-label="menu">☰</button>
+    <button class="icon-btn" id="menu" aria-label="menu">☰</button>
     <div class="title">A Little Walk</div>
     <div class="paw">🐾</div>
   </header>
-
   <main id="list"></main>
+  <button class="fab" id="fab" aria-label="开始散步">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 5v14l11-7z" fill="#fff" stroke="none"/></svg>
+  </button>
+  <button class="pill" id="pill"><span class="dot"></span><span id="pillTime">00:00</span> 散步中</button>
+</div>
 
-  <button class="fab" id="fab" aria-label="记录这次散步">✏️</button>
+<!-- ===== TIMER ===== -->
+<div id="timer" class="view">
+  <div class="timer-dog">🐕</div>
+  <div class="timer-hint">和 <span class="dogname">bonbon</span> 散步中…<br>把手机收起来，回到当下吧</div>
+  <div class="timer-clock" id="clock">00:00</div>
+  <div class="timer-start" id="startedAt"></div>
+  <button class="btn-end" id="endWalk">结束散步</button>
+  <button class="btn-cancel" id="cancelWalk">取消这次</button>
+</div>
 
-  <div class="scrim" id="scrim"></div>
-  <div class="sheet" id="sheet">
-    <div class="grab"></div>
-    <h2 id="sheetTitle">和 bonbon 的散步</h2>
-    <textarea id="text" placeholder="今天散步发生了什么？写一两句就好…"></textarea>
-    <div class="row">
-      <label class="chip">
-        📷 加张照片
-        <input type="file" id="photoInput" accept="image/*">
-      </label>
-      <input class="dur" id="dur" type="number" inputmode="numeric" placeholder="分钟" min="0">
-      <span style="font-size:13px;color:var(--soft)">时长(可不填)</span>
+<!-- ===== DETAIL ===== -->
+<div id="detail" class="view">
+  <div class="topbar"><button class="back" id="back">‹ 返回</button></div>
+  <div class="detail-body">
+    <div class="detail-date" id="dDate"></div>
+    <div class="detail-meta" id="dMeta"></div>
+    <textarea id="dText" placeholder="这次散步，bonbon 和你发现了什么？写下来…"></textarea>
+    <div class="add-row">
+      <label class="chip">📷 <span id="photoLabel">加照片</span>
+        <input type="file" id="photoInput" accept="image/*"></label>
     </div>
-    <div class="preview" id="preview"><button class="x" id="rmPhoto">✕</button><img id="previewImg"></div>
-    <div class="actions">
-      <button class="btn cancel" id="cancel">取消</button>
-      <button class="btn save" id="save">保存</button>
-    </div>
+    <img class="photo-full" id="dPhoto" style="display:none">
+    <button class="save-btn" id="save">保存</button>
+    <button class="del-btn" id="del">删除这条记录</button>
   </div>
+</div>
 
 <script>
-const KEY='alw_entries_v1', DOGKEY='alw_dog';
+const KEY='alw_entries_v1', DOGKEY='alw_dog', ACTIVEKEY='alw_active';
 let dog = localStorage.getItem(DOGKEY) || 'bonbon';
-let pendingPhoto = null;
+let editingId = null, pendingPhoto = undefined; // undefined = unchanged, null = removed
+let tick = null;
 
 const $=id=>document.getElementById(id);
 const load=()=>{ try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]} };
 const store=arr=>localStorage.setItem(KEY, JSON.stringify(arr));
+const pad=n=>String(n).padStart(2,'0');
+const startOf=e=>e.startTs||e.ts;                      // 兼容旧记录
+const fmtClock=ts=>{const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes());};
+const fmtDate=ts=>{const d=new Date(ts);return `${d.getMonth()+1}月${d.getDate()}日`;};
+const fmtYear=ts=>new Date(ts).getFullYear();
+function fmtElapsed(sec){const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;
+  return (h?pad(h)+':':'')+pad(m)+':'+pad(s);}
+function durText(e){const sec=e.durationSec!=null?e.durationSec:(e.dur||0)*60;
+  const m=Math.max(1,Math.round(sec/60));return m+' 分钟';}
 
-function fmtDate(ts){const d=new Date(ts);return `${d.getMonth()+1}月${d.getDate()}日`;}
-function fmtYear(ts){return new Date(ts).getFullYear();}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $(id).classList.add('active'); window.scrollTo(0,0);}
+function setDogText(){document.querySelectorAll('.dogname').forEach(el=>el.textContent=dog);}
 
-function render(){
+/* ---------- HOME ---------- */
+function renderHome(){
   const list=$('list');
-  const items=load().sort((a,b)=>b.ts-a.ts);
+  const items=load().sort((a,b)=>startOf(b)-startOf(a));
   if(!items.length){
-    list.innerHTML=`<div class="empty"><div class="big">🐾</div>
-      <p>还没有散步记录</p>
-      <p>点右下角，<br>和 ${dog} 去走走吧～</p></div>`;
-    return;
+    list.innerHTML=`<div class="empty-state"><div class="big">🐾</div>
+      <p>还没有散步记录</p><p>点右下角，<br>和 ${dog} 去走走吧～</p></div>`;
+  } else {
+    let html='', lastYear=null;
+    for(const it of items){
+      const st=startOf(it), y=fmtYear(st);
+      if(lastYear!==null && y!==lastYear) html+=`<div class="year">${y}年</div>`;
+      lastYear=y;
+      const hasText=it.text&&it.text.trim();
+      html+=`<div class="entry"><div class="date">${fmtDate(st)}</div>
+        <div class="card" data-id="${it.id}">
+          <div class="body">
+            <div class="meta">🕑 ${fmtClock(st)} 出门<span>·</span>🚶 ${durText(it)}</div>
+            <div class="text ${hasText?'':'empty'}">${hasText?escapeHtml(it.text):'点这里，补一句这次散步的感受 ›'}</div>
+          </div>
+          ${it.photo?`<img class="thumb" src="${it.photo}">`:''}
+        </div></div>`;
+    }
+    list.innerHTML=html;
+    list.querySelectorAll('.card').forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
   }
-  let html='', lastYear=null;
-  for(const it of items){
-    const y=fmtYear(it.ts);
-    if(lastYear!==null && y!==lastYear) html+=`<div class="year">${y}年</div>`;
-    lastYear=y;
-    const meta=[];
-    if(it.dur) meta.push('🚶 '+it.dur+' 分钟');
-    html+=`<div class="entry"><div class="date">${fmtDate(it.ts)}</div>
-      <div class="card">
-        ${meta.length?`<div class="meta">${meta.join('')}</div>`:''}
-        <div class="text">${escapeHtml(it.text)}</div>
-        ${it.photo?`<img class="photo" src="${it.photo}">`:''}
-      </div></div>`;
-  }
-  list.innerHTML=html;
+  // FAB vs pill
+  const active=getActive();
+  $('fab').style.display=active?'none':'flex';
+  $('pill').style.display=active?'flex':'none';
 }
 function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-/* sheet */
-function openSheet(){
-  $('sheetTitle').textContent=`和 ${dog} 的散步`;
-  $('scrim').classList.add('show'); $('sheet').classList.add('show');
-  setTimeout(()=>$('text').focus(),200);
+/* ---------- TIMER ---------- */
+function getActive(){try{return JSON.parse(localStorage.getItem(ACTIVEKEY))}catch(e){return null}}
+function startWalk(){
+  const a={startTs:Date.now()};
+  localStorage.setItem(ACTIVEKEY,JSON.stringify(a));
+  openTimer();
 }
-function closeSheet(){
-  $('scrim').classList.remove('show'); $('sheet').classList.remove('show');
-  $('text').value=''; $('dur').value=''; clearPhoto();
+function openTimer(){
+  const a=getActive(); if(!a){renderHome();showView('home');return;}
+  $('startedAt').textContent='出门 '+fmtClock(a.startTs);
+  setDogText();
+  showView('timer');
+  updateClock();
+  clearInterval(tick); tick=setInterval(updateClock,1000);
 }
-function clearPhoto(){ pendingPhoto=null; $('preview').style.display='none'; $('photoInput').value=''; }
+function updateClock(){
+  const a=getActive(); if(!a){clearInterval(tick);return;}
+  $('clock').textContent=fmtElapsed(Math.floor((Date.now()-a.startTs)/1000));
+  if($('pill')) $('pillTime').textContent=fmtElapsed(Math.floor((Date.now()-a.startTs)/1000));
+}
+function endWalk(){
+  const a=getActive(); if(!a)return;
+  clearInterval(tick);
+  const durationSec=Math.max(1,Math.floor((Date.now()-a.startTs)/1000));
+  const arr=load();
+  const id=String(a.startTs);
+  arr.push({id, startTs:a.startTs, durationSec, text:'', photo:null});
+  store(arr);
+  localStorage.removeItem(ACTIVEKEY);
+  renderHome(); showView('home');
+  openDetail(id);           // 结束后直接进详情，方便（也可不写直接返回）
+}
+function cancelWalk(){
+  clearInterval(tick); localStorage.removeItem(ACTIVEKEY);
+  renderHome(); showView('home');
+}
 
-$('fab').onclick=openSheet;
-$('cancel').onclick=closeSheet;
-$('scrim').onclick=closeSheet;
-$('rmPhoto').onclick=clearPhoto;
+/* ---------- DETAIL ---------- */
+function openDetail(id){
+  const e=load().find(x=>x.id===id); if(!e)return;
+  editingId=id; pendingPhoto=undefined;
+  const st=startOf(e);
+  $('dDate').textContent=fmtDate(st);
+  $('dMeta').innerHTML=`🕑 ${fmtClock(st)} 出门 · 🚶 ${durText(e)}`;
+  $('dText').value=e.text||'';
+  if(e.photo){ $('dPhoto').src=e.photo; $('dPhoto').style.display='block'; $('photoLabel').textContent='换照片'; }
+  else { $('dPhoto').style.display='none'; $('photoLabel').textContent='加照片'; }
+  $('photoInput').value='';
+  showView('detail');
+}
+function saveDetail(){
+  const arr=load(); const e=arr.find(x=>x.id===editingId); if(!e){showView('home');return;}
+  e.text=$('dText').value.trim();
+  if(pendingPhoto!==undefined) e.photo=pendingPhoto;
+  try{ store(arr); }
+  catch(err){ alert('照片太多，本地存不下了～这条先不带照片'); e.photo=null; store(arr); }
+  renderHome(); showView('home');
+}
+function delDetail(){
+  if(!confirm('删除这条散步记录？')) return;
+  store(load().filter(x=>x.id!==editingId));
+  renderHome(); showView('home');
+}
 
+/* photo compression */
 $('photoInput').onchange=e=>{
-  const f=e.target.files[0]; if(!f) return;
+  const f=e.target.files[0]; if(!f)return;
   const r=new FileReader();
-  r.onload=ev=>{
-    const img=new Image();
-    img.onload=()=>{
-      const max=1100; let w=img.width,h=img.height;
+  r.onload=ev=>{ const img=new Image();
+    img.onload=()=>{ const max=900; let w=img.width,h=img.height;
       if(w>h&&w>max){h=h*max/w;w=max;} else if(h>max){w=w*max/h;h=max;}
       const c=document.createElement('canvas'); c.width=w;c.height=h;
       c.getContext('2d').drawImage(img,0,0,w,h);
-      pendingPhoto=c.toDataURL('image/jpeg',0.72);
-      $('previewImg').src=pendingPhoto; $('preview').style.display='block';
-    };
-    img.src=ev.target.result;
-  };
+      pendingPhoto=c.toDataURL('image/jpeg',0.7);
+      $('dPhoto').src=pendingPhoto; $('dPhoto').style.display='block'; $('photoLabel').textContent='换照片';
+    }; img.src=ev.target.result; };
   r.readAsDataURL(f);
 };
 
-$('save').onclick=()=>{
-  const text=$('text').value.trim();
-  if(!text && !pendingPhoto){ closeSheet(); return; }
-  const dur=parseInt($('dur').value)||0;
-  const arr=load();
-  arr.push({ id:Date.now()+'-'+Math.floor(Math.random()*1000), ts:Date.now(),
-    text, dur, photo:pendingPhoto });
-  try{ store(arr); }
-  catch(err){ alert('照片太多啦，存不下了～这条先不带照片试试'); return; }
-  closeSheet(); render();
-};
+/* wire up */
+$('fab').onclick=startWalk;
+$('pill').onclick=openTimer;
+$('endWalk').onclick=endWalk;
+$('cancelWalk').onclick=cancelWalk;
+$('back').onclick=()=>{renderHome();showView('home');};
+$('save').onclick=saveDetail;
+$('del').onclick=delDetail;
+$('menu').onclick=()=>{ const n=prompt('你的狗狗叫什么？',dog);
+  if(n&&n.trim()){dog=n.trim();localStorage.setItem(DOGKEY,dog);setDogText();renderHome();} };
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && getActive() && $('timer').classList.contains('active')) updateClock(); });
 
-/* menu — set dog name */
-$('menu').onclick=()=>{
-  const n=prompt('你的狗狗叫什么？',dog);
-  if(n && n.trim()){ dog=n.trim(); localStorage.setItem(DOGKEY,dog); render(); }
-};
-
-render();
+/* boot */
+setDogText();
+renderHome();
+if(getActive()) openTimer(); else showView('home');
 </script>
 </body>
 </html>
