@@ -6,12 +6,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="A Little Walk">
-<meta name="theme-color" content="#FBF6E9">
+<meta name="theme-color" content="#F4F7E7">
 <title>A Little Walk · 小狗散步日记</title>
 <style>
   :root{
-    --bg:#FBF6E9; --card:#FFFDF6; --ink:#4a463f; --soft:#9b958a;
-    --line:#e7e0cf; --accent:#7fae6e; --accent-soft:#eaf2e4; --yellow:#fbe7a1; --dark:#3a3733;
+    --bg:#F4F7E7; --card:#FCFDF4; --ink:#3f4a37; --soft:#9aa088; --line:#e3e7d3;
+    --accent:#6fa85f; --accent-soft:#e7f0d9; --pink:#F29BBE; --dark:#3a4033;
+    --morning:#6fa85f; --day:#e8a23d; --evening:#5b86c4;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;height:100%;}
@@ -19,57 +20,54 @@
     font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif; -webkit-font-smoothing:antialiased;}
   .view{display:none;} .view.active{display:block; min-height:100vh;}
 
-  header{ position:sticky; top:0; z-index:5; background:var(--yellow);
-    padding:calc(env(safe-area-inset-top) + 14px) 18px 14px;
-    display:flex; align-items:center; justify-content:space-between;
-    border-bottom-left-radius:18px; border-bottom-right-radius:18px;}
+  header{ position:sticky; top:0; z-index:5; background:var(--bg);
+    padding:calc(env(safe-area-inset-top) + 14px) 18px 8px;
+    display:flex; align-items:center; justify-content:space-between;}
   .icon-btn{font-size:21px; line-height:1; background:none; border:none; color:var(--ink); padding:6px; cursor:pointer;}
-  .title{font-size:15px; font-weight:600; letter-spacing:.3px; opacity:.85;}
+  .title{font-size:15px; font-weight:600; letter-spacing:.3px; color:var(--accent);}
 
   main{padding:0 18px 130px; max-width:560px; margin:0 auto;}
 
-  /* status header */
-  .status{ display:flex; align-items:center; gap:14px; padding:20px 4px 12px;}
-  .status-icon{ width:52px;height:52px;border-radius:50%; background:var(--accent-soft);
-    display:flex;align-items:center;justify-content:center; font-size:28px; flex-shrink:0;
-    animation:breathe 2.6s ease-in-out infinite;}
-  .status-icon.walked{ background:#fdeecb; animation:wag .9s ease-in-out infinite;}
-  @keyframes breathe{0%,100%{transform:scale(1);opacity:.85;}50%{transform:scale(1.09);opacity:1;}}
-  @keyframes wag{0%,100%{transform:rotate(-7deg);}50%{transform:rotate(7deg);}}
-  .status-text{font-size:16px; line-height:1.5; font-weight:500;}
-  .status-text b{color:var(--accent); font-weight:600;}
+  /* status greeting */
+  .status{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 4px 20px;}
+  .status-text{ font-size:23px; line-height:1.3; font-weight:600; color:var(--ink);}
+  .status-text .min{ color:var(--accent);}
+  .status-flower{ width:78px; height:78px; flex-shrink:0; transform-origin:50% 82%; animation:sway 3.2s ease-in-out infinite;}
+  @keyframes sway{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
 
-  /* timeline */
-  .year{ text-align:center; color:var(--soft); font-size:13px; margin:22px 0 14px;
-    display:flex; align-items:center; gap:12px;}
+  /* year divider */
+  .year{ text-align:center; color:var(--soft); font-size:13px; margin:22px 0 12px; display:flex; align-items:center; gap:12px;}
   .year::before,.year::after{content:""; flex:1; height:1px; background:var(--line);}
-  .entry{ position:relative; padding-left:22px; margin-bottom:22px;}
-  .entry::before{ content:""; position:absolute; left:4px; top:6px; width:9px;height:9px;
-    border-radius:50%; background:var(--bg); border:2px solid var(--accent);}
-  .entry::after{ content:""; position:absolute; left:8px; top:20px; bottom:-22px; width:0; border-left:2px dotted var(--line);}
-  .entry:last-child::after{display:none;}
-  .date{font-size:13px; color:var(--soft); margin-bottom:8px;}
-  .date b{color:var(--ink); font-weight:500;}
-  .card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-    padding:14px 15px; cursor:pointer; display:flex; gap:12px; align-items:flex-start;}
-  .card .body{flex:1; min-width:0;}
-  .meta{font-size:12px; color:var(--soft); margin-bottom:6px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
-  .text{font-size:15px; line-height:1.65; white-space:pre-wrap; word-break:break-word;
-    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
-  .thumb{width:62px;height:62px;border-radius:10px;object-fit:cover; flex-shrink:0; background:var(--bg);}
 
-  .empty-state{ text-align:center; color:var(--soft); padding:60px 30px;}
+  /* daily block */
+  .day{ margin-bottom:8px;}
+  .day-head{ display:flex; align-items:center; gap:9px; margin:16px 0 10px;}
+  .day-date{ font-size:21px; font-weight:600; color:var(--ink); letter-spacing:.5px;}
+  .day-wd{ width:22px;height:22px;border-radius:50%; background:var(--accent-soft); color:var(--accent);
+    font-size:12px; font-weight:600; display:inline-flex;align-items:center;justify-content:center;}
+  .day-entries{ position:relative;}
+  .day-entries::before{ content:""; position:absolute; left:6px; top:8px; bottom:8px; border-left:2px dotted var(--line);}
+  .rec{ position:relative; padding-left:26px; margin-bottom:16px; display:flex; gap:12px; align-items:flex-start; cursor:pointer;}
+  .rec .dot{ position:absolute; left:1px; top:5px; width:11px;height:11px;border-radius:50%; z-index:1;}
+  .dot.morning{background:var(--morning);} .dot.day{background:var(--day);} .dot.evening{background:var(--evening);}
+  .rec-body{ flex:1; min-width:0;}
+  .rec .meta{ font-size:12px; color:var(--soft); margin-bottom:5px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
+  .rec .text{ font-size:15px; line-height:1.6; color:var(--ink); white-space:pre-wrap; word-break:break-word;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
+  .rec .thumb{ width:58px;height:58px;border-radius:10px;object-fit:cover; flex-shrink:0; background:var(--card);}
+
+  .empty-state{ text-align:center; color:var(--soft); padding:50px 30px;}
   .empty-state .big{font-size:46px; margin-bottom:14px;}
   .empty-state p{font-size:15px; line-height:1.7; margin:4px 0;}
 
   .fab{ position:fixed; right:22px; bottom:calc(26px + env(safe-area-inset-bottom));
-    width:64px;height:64px;border-radius:50%; background:var(--dark); color:#fff; border:none;
-    box-shadow:0 6px 18px rgba(0,0,0,.22); display:flex;align-items:center;justify-content:center; cursor:pointer; z-index:8;}
+    width:64px;height:64px;border-radius:50%; background:var(--pink); border:none;
+    box-shadow:0 6px 18px rgba(0,0,0,.18); display:flex;align-items:center;justify-content:center; cursor:pointer; z-index:8;}
   .fab svg{width:26px;height:26px;}
   .fab:active{transform:scale(.94);}
   .pill{ position:fixed; right:22px; bottom:calc(26px + env(safe-area-inset-bottom));
     background:var(--accent); color:#fff; border:none; border-radius:30px; padding:16px 22px;
-    font-size:16px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.22);
+    font-size:16px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.18);
     display:none; align-items:center; gap:10px; cursor:pointer; z-index:8; font-variant-numeric:tabular-nums;}
   .pill .dot{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1.4s infinite;}
   @keyframes blink{50%{opacity:.3;}}
@@ -88,13 +86,12 @@
 
   /* detail / summary */
   .topbar{ position:sticky; top:0; background:var(--bg); z-index:5;
-    padding:calc(env(safe-area-inset-top) + 12px) 18px 12px; display:flex; align-items:center;
-    border-bottom:1px solid var(--line);}
+    padding:calc(env(safe-area-inset-top) + 12px) 18px 12px; display:flex; align-items:center; border-bottom:1px solid var(--line);}
   .back{font-size:16px; background:none;border:none;color:var(--ink); cursor:pointer; padding:6px;}
   .detail-body{padding:18px 20px calc(40px + env(safe-area-inset-bottom)); max-width:560px; margin:0 auto;}
   .witness{ text-align:center; padding:14px 10px 22px;}
   .witness .w-icon{ width:64px;height:64px;border-radius:50%;background:var(--accent-soft); margin:0 auto 14px;
-    display:flex;align-items:center;justify-content:center;font-size:34px; animation:wag .9s ease-in-out infinite;}
+    display:flex;align-items:center;justify-content:center;font-size:34px;}
   .witness .w-line{font-size:19px; line-height:1.5; font-weight:500;}
   .witness .w-sub{font-size:13px; color:var(--soft); margin-top:8px;}
   .detail-date{font-size:20px; font-weight:600; margin-bottom:6px;}
@@ -103,7 +100,7 @@
   .chips{display:flex; gap:8px; flex-wrap:wrap;}
   .chip{ border:1px solid var(--line); background:var(--card); border-radius:12px; padding:9px 13px;
     font-size:15px; color:var(--ink); cursor:pointer; display:inline-flex; gap:6px; align-items:center; user-select:none;}
-  .chip.sel{ border-color:var(--accent); background:var(--accent-soft); }
+  .chip.sel{ border-color:var(--accent); background:var(--accent-soft);}
   .chip.wx{font-size:20px; padding:7px 12px;}
   .chip input{display:none;}
   .place-input{ width:100%; margin-top:8px; border:1px solid var(--line); border-radius:12px;
@@ -115,8 +112,7 @@
   .save-btn{ width:100%; margin-top:24px; padding:16px; border-radius:14px; border:none;
     background:var(--accent); color:#fff; font-size:16px; font-weight:600; cursor:pointer; font-family:inherit;}
   .minor-btn{ width:100%; margin-top:12px; padding:12px; border:none; background:none; font-size:14px; cursor:pointer; font-family:inherit;}
-  .share-btn{color:var(--soft);}
-  .del-btn{color:#c98b8b;}
+  .share-btn{color:var(--soft);} .del-btn{color:#c98b8b;}
 
   /* calendar */
   #cal .detail-body{padding-top:10px;}
@@ -129,7 +125,7 @@
     border-radius:50%; color:var(--ink); position:relative;}
   .cal-day.empty{color:transparent;}
   .cal-day.walked{ background:var(--accent); color:#fff; font-weight:600; cursor:pointer;}
-  .cal-day.today{ outline:2px solid var(--accent); }
+  .cal-day.today{ outline:2px solid var(--accent);}
   .cal-list{margin-top:22px;}
 </style>
 </head>
@@ -144,14 +140,24 @@
   </header>
   <main>
     <div class="status">
-      <div class="status-icon" id="statusIcon">🐶</div>
       <div class="status-text" id="statusText"></div>
+      <div class="status-flower" aria-hidden="true">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="#F29BBE">
+            <circle cx="74" cy="50" r="16"/><circle cx="67" cy="67" r="16"/><circle cx="50" cy="74" r="16"/>
+            <circle cx="33" cy="67" r="16"/><circle cx="26" cy="50" r="16"/><circle cx="33" cy="33" r="16"/>
+            <circle cx="50" cy="26" r="16"/><circle cx="67" cy="33" r="16"/>
+          </g>
+          <circle cx="50" cy="50" r="24" fill="#F5AAC7"/>
+          <circle cx="36" cy="56" r="3.6" fill="#F7C6DA"/><circle cx="64" cy="56" r="3.6" fill="#F7C6DA"/>
+          <ellipse cx="42" cy="47" rx="3.1" ry="5" fill="#3a4033"/><ellipse cx="58" cy="47" rx="3.1" ry="5" fill="#3a4033"/>
+          <path d="M41 57 Q50 68 59 57" stroke="#3a4033" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
     </div>
     <div id="list"></div>
   </main>
-  <button class="fab" id="fab" aria-label="开始散步">
-    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg>
-  </button>
+  <button class="fab" id="fab" aria-label="开始散步"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></button>
   <button class="pill" id="pill"><span class="dot"></span><span id="pillTime">00:00</span> 散步中</button>
 </div>
 
@@ -178,20 +184,16 @@
       <div class="detail-date" id="dDate"></div>
       <div class="detail-meta" id="dMeta"></div>
     </div>
-
     <div class="label">天气</div>
     <div class="chips" id="wxChips"></div>
-
     <div class="label">地点</div>
     <div class="chips" id="placeChips"></div>
     <input class="place-input" id="placeInput" maxlength="14" placeholder="或自己写（如：流花湖公园）">
-
     <div class="label">这次散步</div>
     <textarea id="dText" placeholder="发现了什么？写一两句…不写也没关系"></textarea>
     <label class="chip" style="margin-top:12px">📷 <span id="photoLabel">加照片</span>
       <input type="file" id="photoInput" accept="image/*"></label>
     <img class="photo-full" id="dPhoto">
-
     <button class="save-btn" id="save">保存</button>
     <button class="minor-btn share-btn" id="share">分享这天（设计中）</button>
     <button class="minor-btn del-btn" id="del">删除这条记录</button>
@@ -202,9 +204,7 @@
 <div id="cal" class="view">
   <div class="topbar"><button class="back" id="calBack">‹ 返回</button></div>
   <div class="detail-body">
-    <div class="cal-nav">
-      <button id="calPrev">‹</button><div class="cal-title" id="calTitle"></div><button id="calNext">›</button>
-    </div>
+    <div class="cal-nav"><button id="calPrev">‹</button><div class="cal-title" id="calTitle"></div><button id="calNext">›</button></div>
     <div class="cal-grid" id="calGrid"></div>
     <div class="cal-list" id="calList"></div>
   </div>
@@ -216,6 +216,7 @@ const WX={sunny:'☀️',cloudy:'☁️',rain:'🌧️',snow:'❄️'};
 const WXLABEL={sunny:'晴',cloudy:'阴',rain:'雨',snow:'雪'};
 const PLACES=['公园','地库','小区','河边'];
 const WD=['周日','周一','周二','周三','周四','周五','周六'];
+const WD1=['日','一','二','三','四','五','六'];
 let dog=localStorage.getItem(DOGKEY)||'bonbon';
 let editingId=null, pendingPhoto, selWeather=null, tick=null;
 let calY,calM;
@@ -235,45 +236,53 @@ function sameDay(ts,d){const a=new Date(ts);return a.getFullYear()===d.getFullYe
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function defaultText(e){return `今天和 ${dog} 一起，好好走了 ${durMin(e)} 分钟 🐾`;}
 function warmLine(e){return `今天，你和 ${dog} 一起好好走了 ${durMin(e)} 分钟。`;}
+function dotClass(ts){const h=new Date(ts).getHours();return h<9?'morning':(h<17?'day':'evening');}
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0);}
 function setDog(){document.querySelectorAll('.dogname').forEach(el=>el.textContent=dog);}
+
+function recHtml(it){
+  const st=startOf(it);
+  const meta=[`🕑 ${fmtClock(st)} 出门`];
+  if(it.weather&&WX[it.weather])meta.push(WX[it.weather]);
+  if(it.place)meta.push('📍'+esc(it.place));
+  meta.push(`🚶 ${durMin(it)}分钟`);
+  const txt=it.text&&it.text.trim()?esc(it.text):esc(defaultText(it));
+  return `<div class="rec" data-id="${it.id}">
+    <span class="dot ${dotClass(st)}"></span>
+    <div class="rec-body"><div class="meta">${meta.join('<span>·</span>')}</div><div class="text">${txt}</div></div>
+    ${it.photo?`<img class="thumb" src="${it.photo}">`:''}</div>`;
+}
 
 /* ---------- HOME ---------- */
 function renderHome(){
   const items=load().sort((a,b)=>startOf(b)-startOf(a));
-  // status
   const today=new Date();
   const td=items.filter(e=>sameDay(startOf(e),today));
   if(td.length){
     const total=td.reduce((s,e)=>s+durMin(e),0);
-    $('statusText').innerHTML=`今天和 ${dog} 散步了 <b>${total}</b> 分钟${td.length>1?` · ${td.length} 次`:''}`;
-    $('statusIcon').textContent='🐕'; $('statusIcon').classList.add('walked');
+    $('statusText').innerHTML=`今天和 ${esc(dog)}<br>散步了 <span class="min">${total}</span> 分钟${td.length>1?` · ${td.length} 次`:''}`;
   }else{
-    $('statusText').innerHTML=`和 ${dog} 出去走走吧！`;
-    $('statusIcon').textContent='🐶'; $('statusIcon').classList.remove('walked');
+    $('statusText').innerHTML=`和 ${esc(dog)}<br>出去走走吧！`;
   }
-  // list
   const list=$('list');
   if(!items.length){
-    list.innerHTML=`<div class="empty-state"><div class="big">🐾</div><p>还没有散步记录</p><p>点右下角，和 ${dog} 去走走吧～</p></div>`;
+    list.innerHTML=`<div class="empty-state"><div class="big">🐾</div><p>还没有散步记录</p><p>点右下角，和 ${esc(dog)} 去走走吧～</p></div>`;
   }else{
-    let html='',ly=null;
+    let html='', lastKey=null, lastYear=null, open=false;
     for(const it of items){
-      const st=startOf(it),y=yr(st);
-      if(ly!==null&&y!==ly)html+=`<div class="year">${y}年</div>`; ly=y;
-      const meta=[`🕑 ${fmtClock(st)} 出门`];
-      if(it.weather&&WX[it.weather])meta.push(WX[it.weather]);
-      if(it.place)meta.push('📍'+esc(it.place));
-      meta.push(`🚶 ${durMin(it)}分钟`);
-      const txt=it.text&&it.text.trim()?esc(it.text):esc(defaultText(it));
-      html+=`<div class="entry"><div class="date"><b>${fmtDate(st)}</b> ${wd(st)}</div>
-        <div class="card" data-id="${it.id}"><div class="body">
-          <div class="meta">${meta.join('<span>·</span>')}</div>
-          <div class="text">${txt}</div>
-        </div>${it.photo?`<img class="thumb" src="${it.photo}">`:''}</div></div>`;
+      const st=startOf(it), d=new Date(st);
+      const key=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`, y=d.getFullYear();
+      if(key!==lastKey){
+        if(open)html+=`</div></div>`;
+        if(lastYear!==null&&y!==lastYear)html+=`<div class="year">${y}年</div>`;
+        lastYear=y; lastKey=key; open=true;
+        html+=`<div class="day"><div class="day-head"><span class="day-date">${d.getMonth()+1}.${d.getDate()}</span><span class="day-wd">${WD1[d.getDay()]}</span></div><div class="day-entries">`;
+      }
+      html+=recHtml(it);
     }
+    if(open)html+=`</div></div>`;
     list.innerHTML=html;
-    list.querySelectorAll('.card').forEach(c=>c.onclick=()=>openDetail(c.dataset.id,false));
+    list.querySelectorAll('.rec').forEach(c=>c.onclick=()=>openDetail(c.dataset.id,false));
   }
   const act=getActive();
   $('fab').style.display=act?'none':'flex';
@@ -289,8 +298,7 @@ function openTimer(){const a=getActive();if(!a){renderHome();showView('home');re
 function updateClock(){const a=getActive();if(!a){clearInterval(tick);return;}
   const t=fmtElapsed(Math.floor((Date.now()-a.startTs)/1000));$('clock').textContent=t;$('pillTime').textContent=t;}
 function endWalk(){const a=getActive();if(!a)return;clearInterval(tick);
-  const durationSec=Math.max(1,Math.floor((Date.now()-a.startTs)/1000));
-  const id=String(a.startTs);
+  const durationSec=Math.max(1,Math.floor((Date.now()-a.startTs)/1000));const id=String(a.startTs);
   const arr=load();arr.push({id,startTs:a.startTs,durationSec,text:'',photo:null,weather:null,place:null});store(arr);
   localStorage.removeItem(ACTIVEKEY);renderHome();openDetail(id,true);}
 function cancelWalk(){clearInterval(tick);localStorage.removeItem(ACTIVEKEY);renderHome();showView('home');}
@@ -298,21 +306,18 @@ function cancelWalk(){clearInterval(tick);localStorage.removeItem(ACTIVEKEY);ren
 /* ---------- DETAIL / SUMMARY ---------- */
 function buildChips(){
   $('wxChips').innerHTML=Object.keys(WX).map(k=>`<div class="chip wx" data-w="${k}" title="${WXLABEL[k]}">${WX[k]}</div>`).join('');
-  $('wxChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
-    const k=c.dataset.w; selWeather=(selWeather===k?null:k);
+  $('wxChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{const k=c.dataset.w;selWeather=(selWeather===k?null:k);
     $('wxChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('sel',x.dataset.w===selWeather));});
   $('placeChips').innerHTML=PLACES.map(p=>`<div class="chip" data-p="${p}">${p}</div>`).join('');
   $('placeChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{$('placeInput').value=c.dataset.p;syncPlaceChips();});
 }
-function syncPlaceChips(){const v=$('placeInput').value.trim();
-  $('placeChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('sel',x.dataset.p===v));}
+function syncPlaceChips(){const v=$('placeInput').value.trim();$('placeChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('sel',x.dataset.p===v));}
 function openDetail(id,fresh){
   const e=load().find(x=>x.id===id);if(!e)return;
   editingId=id;pendingPhoto=undefined;selWeather=e.weather||null;
   const st=startOf(e);
-  $('witness').style.display=fresh?'block':'none';
-  $('dHead').style.display=fresh?'none':'block';
-  if(fresh){$('wLine').textContent=warmLine(e);}
+  $('witness').style.display=fresh?'block':'none';$('dHead').style.display=fresh?'none':'block';
+  if(fresh)$('wLine').textContent=warmLine(e);
   $('dDate').innerHTML=`${fmtDate(st)} <span style="color:var(--soft);font-weight:400">${wd(st)}</span>`;
   $('dMeta').innerHTML=`🕑 ${fmtClock(st)} 出门 · 🚶 ${durMin(e)} 分钟`;
   $('wxChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('sel',x.dataset.w===selWeather));
@@ -320,8 +325,7 @@ function openDetail(id,fresh){
   $('dText').value=e.text||'';
   if(e.photo){$('dPhoto').src=e.photo;$('dPhoto').style.display='block';$('photoLabel').textContent='换照片';}
   else{$('dPhoto').style.display='none';$('photoLabel').textContent='加照片';}
-  $('photoInput').value='';
-  $('del').style.display=fresh?'none':'block';
+  $('photoInput').value='';$('del').style.display=fresh?'none':'block';
   setDog();showView('detail');
 }
 function saveDetail(){
@@ -345,28 +349,20 @@ function openCal(){const n=new Date();calY=n.getFullYear();calM=n.getMonth();ren
 function renderCal(){
   $('calTitle').textContent=`${calY}年${calM+1}月`;
   const byDay={};load().forEach(e=>{const d=new Date(startOf(e));byDay[`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`]=true;});
-  const first=new Date(calY,calM,1).getDay();
-  const days=new Date(calY,calM+1,0).getDate();
-  const today=new Date();
-  let g=['日','一','二','三','四','五','六'].map(w=>`<div class="cal-wd">${w}</div>`).join('');
+  const first=new Date(calY,calM,1).getDay(), days=new Date(calY,calM+1,0).getDate(), today=new Date();
+  let g=WD1.map(w=>`<div class="cal-wd">${w}</div>`).join('');
   for(let i=0;i<first;i++)g+=`<div class="cal-day empty">.</div>`;
   for(let d=1;d<=days;d++){
-    const walked=byDay[`${calY}-${calM}-${d}`];
-    const isToday=sameDay(new Date(calY,calM,d).getTime(),today);
+    const walked=byDay[`${calY}-${calM}-${d}`], isToday=sameDay(new Date(calY,calM,d).getTime(),today);
     g+=`<div class="cal-day ${walked?'walked':''} ${isToday?'today':''}" ${walked?`data-d="${d}"`:''}>${d}</div>`;
   }
   $('calGrid').innerHTML=g;$('calList').innerHTML='';
   $('calGrid').querySelectorAll('.cal-day.walked').forEach(c=>c.onclick=()=>showDay(+c.dataset.d));
 }
 function showDay(d){
-  const items=load().filter(e=>{const x=new Date(startOf(e));return x.getFullYear()===calY&&x.getMonth()===calM&&x.getDate()===d;})
-    .sort((a,b)=>startOf(b)-startOf(a));
-  $('calList').innerHTML=`<div class="date" style="margin-bottom:12px"><b>${calM+1}月${d}日</b> ${wd(items[0]?startOf(items[0]):new Date(calY,calM,d))}</div>`+
-    items.map(it=>{const meta=[`🕑 ${fmtClock(startOf(it))}`];if(it.weather)meta.push(WX[it.weather]);if(it.place)meta.push('📍'+esc(it.place));meta.push(`🚶 ${durMin(it)}分钟`);
-      const txt=it.text&&it.text.trim()?esc(it.text):esc(defaultText(it));
-      return `<div class="entry" style="padding-left:0;margin-bottom:14px"><div class="card" data-id="${it.id}"><div class="body">
-        <div class="meta">${meta.join('<span>·</span>')}</div><div class="text">${txt}</div></div>${it.photo?`<img class="thumb" src="${it.photo}">`:''}</div></div>`;}).join('');
-  $('calList').querySelectorAll('.card').forEach(c=>c.onclick=()=>openDetail(c.dataset.id,false));
+  const items=load().filter(e=>{const x=new Date(startOf(e));return x.getFullYear()===calY&&x.getMonth()===calM&&x.getDate()===d;}).sort((a,b)=>startOf(b)-startOf(a));
+  $('calList').innerHTML=`<div class="day-head"><span class="day-date">${calM+1}.${d}</span><span class="day-wd">${WD1[new Date(calY,calM,d).getDay()]}</span></div><div class="day-entries">`+items.map(recHtml).join('')+`</div>`;
+  $('calList').querySelectorAll('.rec').forEach(c=>c.onclick=()=>openDetail(c.dataset.id,false));
 }
 
 /* wire */
@@ -382,7 +378,6 @@ $('calNext').onclick=()=>{calM++;if(calM>11){calM=0;calY++;}renderCal();};
 $('menu').onclick=()=>{const n=prompt('你的狗狗叫什么？',dog);if(n&&n.trim()){dog=n.trim();localStorage.setItem(DOGKEY,dog);setDog();renderHome();}};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&getActive()&&$('timer').classList.contains('active'))updateClock();});
 
-/* boot */
 buildChips();setDog();renderHome();
 if(getActive())openTimer();else showView('home');
 </script>
