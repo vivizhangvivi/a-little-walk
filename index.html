@@ -6,12 +6,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="A Little Walk">
-<meta name="theme-color" content="#F4F7E7">
+<meta name="theme-color" content="#F4F6E4">
 <title>A Little Walk · 小狗散步日记</title>
 <style>
   :root{
-    --bg:#F4F7E7; --card:#FCFDF4; --ink:#3f4a37; --soft:#9aa088; --line:#e3e7d3;
-    --accent:#6fa85f; --accent-soft:#e7f0d9; --pink:#F29BBE; --dark:#3a4033;
+    --bg:#F8F7EE; --header:#F4F6E4; --card:#FFFFFF; --ink:#38624A; --soft:#7C9484; --line:#E4E6D4;
+    --accent:#4E8C5C; --accent-soft:#E7F0DC; --pink:#F8A0B8; --dark:#2C4A37;
     --morning:#6fa85f; --day:#e8a23d; --evening:#5b86c4;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -20,7 +20,7 @@
     font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif; -webkit-font-smoothing:antialiased;}
   .view{display:none;} .view.active{display:block; min-height:100vh;}
 
-  header{ position:sticky; top:0; z-index:5; background:var(--bg);
+  header{ position:sticky; top:0; z-index:5; background:var(--header);
     padding:calc(env(safe-area-inset-top) + 14px) 18px 8px;
     display:flex; align-items:center; justify-content:space-between;}
   .icon-btn{font-size:21px; line-height:1; background:none; border:none; color:var(--ink); padding:6px; cursor:pointer;}
@@ -28,11 +28,12 @@
 
   main{padding:0 18px 130px; max-width:560px; margin:0 auto;}
 
-  /* status greeting */
-  .status{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 4px 20px;}
-  .status-text{ font-size:23px; line-height:1.3; font-weight:600; color:var(--ink);}
-  .status-text .min{ color:var(--accent);}
-  .status-flower{ width:78px; height:78px; flex-shrink:0; transform-origin:50% 82%; animation:sway 3.2s ease-in-out infinite;}
+  /* hero bar (顶栏: 花花 + 问候语) */
+  .hero{ background:var(--header); border-radius:0 0 22px 22px; padding:2px 22px 22px; margin-bottom:14px;}
+  .status{ max-width:560px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+  .status-text{ font-size:23px; line-height:1.35; font-weight:700; color:var(--ink);}
+  .status-text .min{ color:var(--pink);}
+  .status-flower{ width:80px; height:80px; flex-shrink:0; transform-origin:50% 82%; animation:sway 3.2s ease-in-out infinite;}
   @keyframes sway{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
 
   /* year divider */
@@ -45,16 +46,16 @@
   .day-date{ font-size:21px; font-weight:600; color:var(--ink); letter-spacing:.5px;}
   .day-wd{ width:22px;height:22px;border-radius:50%; background:var(--accent-soft); color:var(--accent);
     font-size:12px; font-weight:600; display:inline-flex;align-items:center;justify-content:center;}
-  .day-entries{ position:relative;}
-  .day-entries::before{ content:""; position:absolute; left:6px; top:8px; bottom:8px; border-left:2px dotted var(--line);}
-  .rec{ position:relative; padding-left:26px; margin-bottom:16px; display:flex; gap:12px; align-items:flex-start; cursor:pointer;}
-  .rec .dot{ position:absolute; left:1px; top:5px; width:11px;height:11px;border-radius:50%; z-index:1;}
+  .rec{ position:relative; background:var(--card); border:1.5px solid var(--line); border-radius:14px;
+    margin-bottom:14px; cursor:pointer;}
+  .rec .dot{ position:absolute; left:-6px; top:13px; width:11px;height:11px;border-radius:50%;
+    border:2.5px solid var(--bg); z-index:1;}
   .dot.morning{background:var(--morning);} .dot.day{background:var(--day);} .dot.evening{background:var(--evening);}
-  .rec-body{ flex:1; min-width:0;}
-  .rec .meta{ font-size:12px; color:var(--soft); margin-bottom:5px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
-  .rec .text{ font-size:15px; line-height:1.6; color:var(--ink); white-space:pre-wrap; word-break:break-word;
+  .rec .meta{ font-size:12px; color:var(--soft); padding:11px 14px 0; display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
+  .rec-main{ display:flex; gap:12px; align-items:flex-start; padding:7px 14px 12px;}
+  .rec .text{ flex:1; min-width:0; font-size:15px; line-height:1.6; color:var(--ink); white-space:pre-wrap; word-break:break-word;
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
-  .rec .thumb{ width:58px;height:58px;border-radius:10px;object-fit:cover; flex-shrink:0; background:var(--card);}
+  .rec .thumb{ width:58px;height:58px;border-radius:10px;object-fit:cover; flex-shrink:0; background:var(--accent-soft);}
 
   .empty-state{ text-align:center; color:var(--soft); padding:50px 30px;}
   .empty-state .big{font-size:46px; margin-bottom:14px;}
@@ -138,23 +139,25 @@
     <div class="title">A Little Walk</div>
     <button class="icon-btn" id="calBtn" aria-label="日历">📅</button>
   </header>
-  <main>
+  <div class="hero">
     <div class="status">
-      <div class="status-text" id="statusText"></div>
       <div class="status-flower" aria-hidden="true">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <g fill="#F29BBE">
+          <g fill="#F8A0B8">
             <circle cx="74" cy="50" r="16"/><circle cx="67" cy="67" r="16"/><circle cx="50" cy="74" r="16"/>
             <circle cx="33" cy="67" r="16"/><circle cx="26" cy="50" r="16"/><circle cx="33" cy="33" r="16"/>
             <circle cx="50" cy="26" r="16"/><circle cx="67" cy="33" r="16"/>
           </g>
-          <circle cx="50" cy="50" r="24" fill="#F5AAC7"/>
-          <circle cx="36" cy="56" r="3.6" fill="#F7C6DA"/><circle cx="64" cy="56" r="3.6" fill="#F7C6DA"/>
-          <ellipse cx="42" cy="47" rx="3.1" ry="5" fill="#3a4033"/><ellipse cx="58" cy="47" rx="3.1" ry="5" fill="#3a4033"/>
-          <path d="M41 57 Q50 68 59 57" stroke="#3a4033" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="24" fill="#FAAEC2"/>
+          <circle cx="36" cy="56" r="3.6" fill="#FCCBDA"/><circle cx="64" cy="56" r="3.6" fill="#FCCBDA"/>
+          <ellipse cx="42" cy="47" rx="3.1" ry="5" fill="#35543F"/><ellipse cx="58" cy="47" rx="3.1" ry="5" fill="#35543F"/>
+          <path d="M41 57 Q50 68 59 57" stroke="#35543F" stroke-width="3" fill="none" stroke-linecap="round"/>
         </svg>
       </div>
+      <div class="status-text" id="statusText"></div>
     </div>
+  </div>
+  <main>
     <div id="list"></div>
   </main>
   <button class="fab" id="fab" aria-label="开始散步"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></button>
@@ -249,8 +252,8 @@ function recHtml(it){
   const txt=it.text&&it.text.trim()?esc(it.text):esc(defaultText(it));
   return `<div class="rec" data-id="${it.id}">
     <span class="dot ${dotClass(st)}"></span>
-    <div class="rec-body"><div class="meta">${meta.join('<span>·</span>')}</div><div class="text">${txt}</div></div>
-    ${it.photo?`<img class="thumb" src="${it.photo}">`:''}</div>`;
+    <div class="meta">${meta.join('<span>·</span>')}</div>
+    <div class="rec-main"><div class="text">${txt}</div>${it.photo?`<img class="thumb" src="${it.photo}">`:''}</div></div>`;
 }
 
 /* ---------- HOME ---------- */
