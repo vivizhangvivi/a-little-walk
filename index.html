@@ -34,20 +34,21 @@
   .title{ font-family:'AnonymousPro',monospace; font-weight:700; font-size:22px;
     letter-spacing:1.5px; color:var(--pen);}
 
-  main{padding:0 34px 120px; max-width:520px; margin:0 auto;}
+  main{padding:22px 34px 120px; max-width:520px; margin:0 auto;}
 
-  /* hero: hand-lettered Today 42 mins + dog (数值来自 Figma Dev Mode) */
-  .hero{ padding:8px 0 0; }
-  .hero-line{ display:flex; align-items:flex-end; justify-content:center; gap:20px; height:54px;}
-  .hero-line img.today{height:51px;} .hero-line img.num{height:36px; margin-bottom:3px;} .hero-line img.mins{height:30px;}
-  .hero-dog{ text-align:center; margin:8px 0 4px; cursor:pointer; }
-  .hero-dog img{height:63px; display:inline-block; transform-origin:50% 90%; animation:sway 3.4s ease-in-out infinite;}
+  /* hero: 绝对定位, 坐标直接取自 Figma Dev Mode (402宽画框) */
+  .hero{ position:relative; width:100%; max-width:402px; margin:2px auto 0; height:146px;}
+  .hero img.today{ position:absolute; left:19px; top:2px; height:51px;}
+  .hero img.num{ position:absolute; left:189px; top:0; height:36px;}
+  .hero img.mins{ position:absolute; left:291px; top:9px; height:30px;}
+  .hero-dog{ position:absolute; left:171px; top:79px; cursor:pointer;}
+  .hero-dog img{ height:62px; display:block; transform-origin:50% 90%; animation:sway 3.4s ease-in-out infinite;}
   .hero-dog:active img{transform:scale(.95);}
   @keyframes sway{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
 
   /* day head — 7/10 是 16px 明朝体, 周几圈 11px */
-  .day{ margin-bottom:2px;}
-  .day-head{ display:flex; align-items:center; gap:6px; margin:26px 0 8px;}
+  .day{ margin-bottom:0;}
+  .day-head{ display:flex; align-items:center; gap:6px; margin:14px 0 4px;}
   .day-date{ font-family:var(--serif); font-size:16px; color:var(--pen);}
   .day-wd{ font-family:var(--serif); width:11px;height:11px;border-radius:50%; background:var(--wd-bg); color:var(--pen);
     font-size:9px; line-height:1; display:inline-flex;align-items:center;justify-content:center;}
@@ -57,7 +58,7 @@
 
   /* record card — radius 10, dot 10.5, photo 69²square (来自 Dev Mode) */
   .rec{ position:relative; background:var(--card); border-radius:10px;
-    display:flex; align-items:flex-start; gap:12px; padding:11px 13px 11px 15px; margin-bottom:8px; cursor:pointer;}
+    display:flex; align-items:flex-start; gap:12px; padding:11px 13px 11px 15px; margin-bottom:4px; cursor:pointer;}
   .rec .dot{ position:absolute; left:-5px; top:15px; width:10.5px;height:10.5px; z-index:1;}
   .rec-l{ flex:1; min-width:0; display:flex; flex-direction:column;}
   .rec .meta{ font-family:var(--serif); font-size:13px; color:var(--pen);
@@ -145,11 +146,9 @@
     <button class="ic cal" id="calBtn" aria-label="日历"><img src="assets/cal.svg" alt=""></button>
   </header>
   <div class="hero">
-    <div class="hero-line" id="heroLine">
-      <img class="today" src="assets/today.svg" alt="Today">
-      <img class="num" src="assets/num.svg" alt="42">
-      <img class="mins" src="assets/mins.svg" alt="mins">
-    </div>
+    <img class="today" src="assets/today.svg" alt="Today">
+    <img class="num" src="assets/num.svg" alt="42">
+    <img class="mins" src="assets/mins.svg" alt="mins">
     <div class="hero-dog" id="startDog" aria-label="开始散步"><img src="assets/dog.svg" alt=""></div>
   </div>
   <main>
