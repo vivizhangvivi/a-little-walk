@@ -64,9 +64,10 @@
   .rec .meta{ font-family:var(--serif); font-size:13px; color:var(--pen);
     display:flex; gap:10px; align-items:baseline; white-space:nowrap; overflow:hidden; margin-bottom:6px;}
   .rec .meta .t{}
-  .rec .text{ font-family:var(--hand); font-size:16px; line-height:18px; letter-spacing:-1.28px; color:var(--ink);
+  .rec .text{ font-family:var(--hand); font-size:16px; line-height:18px; letter-spacing:-0.08em; color:var(--ink);
     white-space:pre-wrap; word-break:break-word;
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
+  .rec .text .lat{ letter-spacing:0; }   /* 英文/数字片段: 字距归零 */
   .rec .thumb{ width:69px; height:69px; align-self:flex-start; object-fit:cover; border-radius:10px; flex-shrink:0; background:var(--wd-bg);}
 
   .empty-state{ text-align:center; color:var(--soft); padding:40px 30px; font-family:var(--hand);}
@@ -230,6 +231,9 @@ const durMin=e=>{const s=e.durationSec!=null?e.durationSec:(e.dur||0)*60;return 
 function fmtElapsed(sec){const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return (h?pad(h)+':':'')+pad(m)+':'+pad(s);}
 function sameDay(ts,d){const a=new Date(ts);return a.getFullYear()===d.getFullYear()&&a.getMonth()===d.getMonth()&&a.getDate()===d.getDate();}
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+/* 中文字距 -8%, 但英文/数字片段字距归零(否则挤成一团) */
+function wrapLat(raw){return raw.replace(/[A-Za-z0-9][A-Za-z0-9'’.\-]*|[^A-Za-z0-9]+/g,seg=>{
+  const e=esc(seg);return /^[A-Za-z0-9]/.test(seg)?`<span class="lat">${e}</span>`:e;});}
 function defaultText(e){return `今天和 ${dog} 一起，好好走了 ${durMin(e)} 分钟 🐾`;}
 function warmLine(e){return `今天，你和 ${dog} 一起好好走了 ${durMin(e)} 分钟。`;}
 /* 时段圆点：9点前橙(morning) / 9-17绿(day) / 17后蓝黑(evening) */
@@ -244,7 +248,7 @@ function recHtml(it){
   if(it.place)parts.push(`<span>${esc(it.place)}</span>`);
   parts.push(`<span>${durMin(it)}min</span>`);
   parts.push(`<span>*km</span>`);
-  const txt=it.text&&it.text.trim()?esc(it.text):esc(defaultText(it));
+  const txt=wrapLat(it.text&&it.text.trim()?it.text:defaultText(it));
   return `<div class="rec" data-id="${it.id}">
     <img class="dot" src="assets/dot-${dotClass(st)}.svg" alt="">
     <div class="rec-l"><div class="meta">${parts.join('')}</div><div class="text">${txt}</div></div>
