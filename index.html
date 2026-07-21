@@ -6,13 +6,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="A Little Walk">
-<meta name="theme-color" content="#F4F6E4">
+<meta name="theme-color" content="#FFF2C8">
 <title>A Little Walk · 小狗散步日记</title>
 <style>
+  @font-face{font-family:'AnonymousPro';src:url('assets/fonts/anonymous-pro-700.woff2') format('woff2');font-weight:700;font-display:swap;}
+  @font-face{font-family:'Jason';src:url('assets/fonts/JasonHandwriting9.ttf') format('truetype');font-display:swap;}
+  @font-face{font-family:'Mincho';src:url('assets/fonts/huiwen-mincho.ttf') format('truetype');font-display:swap;}
+
   :root{
-    --bg:#F8F7EE; --header:#F4F6E4; --card:#FFFFFF; --ink:#38624A; --soft:#7C9484; --line:#E4E6D4;
-    --accent:#4E8C5C; --accent-soft:#E7F0DC; --pink:#F8A0B8; --dark:#2C4A37;
-    --morning:#6fa85f; --day:#e8a23d; --evening:#5b86c4;
+    --bg:#FFF2C8; --card:#FFFFFF; --pen:#1F724B; --ink:#38624A; --soft:#7C9484; --line:#EFE6BE;
+    --pink:#F8A0B8; --wd-bg:#EEF4DB; --dark:#2C4A37;
+    --hand:'Jason','PingFang SC',sans-serif;
+    --serif:'Mincho','Songti SC',serif;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;height:100%;}
@@ -20,113 +25,114 @@
     font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif; -webkit-font-smoothing:antialiased;}
   .view{display:none;} .view.active{display:block; min-height:100vh;}
 
-  header{ position:sticky; top:0; z-index:5; background:var(--header);
-    padding:calc(env(safe-area-inset-top) + 14px) 18px 8px;
+  /* ---------- HOME ---------- */
+  header{ position:sticky; top:0; z-index:5; background:var(--bg);
+    padding:calc(env(safe-area-inset-top) + 16px) 22px 6px;
     display:flex; align-items:center; justify-content:space-between;}
-  .icon-btn{font-size:21px; line-height:1; background:none; border:none; color:var(--ink); padding:6px; cursor:pointer;}
-  .title{font-size:15px; font-weight:600; letter-spacing:.3px; color:var(--accent);}
+  .ic{ background:none; border:none; padding:4px; cursor:pointer; display:flex; align-items:center;}
+  .ic.poop img{height:26px;} .ic.cal img{height:31px;}
+  .title{ font-family:'AnonymousPro',monospace; font-weight:700; font-size:22px;
+    letter-spacing:1.5px; color:var(--pen);}
 
-  main{padding:0 18px 130px; max-width:560px; margin:0 auto;}
+  main{padding:0 32px 120px; max-width:520px; margin:0 auto;}
 
-  /* hero bar (顶栏: 花花 + 问候语) */
-  .hero{ background:var(--header); border-radius:0 0 22px 22px; padding:2px 22px 22px; margin-bottom:14px;}
-  .status{ max-width:560px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px;}
-  .status-text{ font-size:23px; line-height:1.35; font-weight:700; color:var(--ink);}
-  .status-text .min{ color:var(--pink);}
-  .status-flower{ width:80px; height:80px; flex-shrink:0; transform-origin:50% 82%; animation:sway 3.2s ease-in-out infinite;}
-  @keyframes sway{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+  /* hero: hand-lettered Today 42 mins + dog */
+  .hero{ padding:6px 0 4px; }
+  .hero-line{ display:flex; align-items:flex-end; justify-content:center; gap:11px; height:64px;}
+  .hero-line img.today{height:46px;} .hero-line img.num{height:56px;} .hero-line img.mins{height:40px;}
+  .hero-dog{ text-align:center; margin:10px 0 6px; cursor:pointer; }
+  .hero-dog img{height:96px; display:inline-block; transform-origin:50% 90%; animation:sway 3.4s ease-in-out infinite;}
+  .hero-dog:active img{transform:scale(.95);}
+  @keyframes sway{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
 
-  /* year divider */
+  /* day head */
+  .day{ margin-bottom:2px;}
+  .day-head{ display:flex; align-items:baseline; gap:8px; margin:20px 0 12px;}
+  .day-date{ font-family:var(--serif); font-size:23px; font-weight:700; color:var(--pen); letter-spacing:.5px;}
+  .day-wd{ font-family:var(--serif); width:22px;height:22px;border-radius:50%; background:var(--wd-bg); color:var(--pen);
+    font-size:12px; display:inline-flex;align-items:center;justify-content:center; align-self:center;}
+
   .year{ text-align:center; color:var(--soft); font-size:13px; margin:22px 0 12px; display:flex; align-items:center; gap:12px;}
   .year::before,.year::after{content:""; flex:1; height:1px; background:var(--line);}
 
-  /* daily block */
-  .day{ margin-bottom:8px;}
-  .day-head{ display:flex; align-items:center; gap:9px; margin:16px 0 10px;}
-  .day-date{ font-size:21px; font-weight:600; color:var(--ink); letter-spacing:.5px;}
-  .day-wd{ width:22px;height:22px;border-radius:50%; background:var(--accent-soft); color:var(--accent);
-    font-size:12px; font-weight:600; display:inline-flex;align-items:center;justify-content:center;}
-  .rec{ position:relative; background:var(--card); border:1.5px solid var(--line); border-radius:14px;
-    margin-bottom:14px; cursor:pointer;}
-  .rec .dot{ position:absolute; left:-6px; top:13px; width:11px;height:11px;border-radius:50%;
-    border:2.5px solid var(--bg); z-index:1;}
-  .dot.morning{background:var(--morning);} .dot.day{background:var(--day);} .dot.evening{background:var(--evening);}
-  .rec .meta{ font-size:12px; color:var(--soft); padding:11px 14px 0; display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
-  .rec-main{ display:flex; gap:12px; align-items:flex-start; padding:7px 14px 12px;}
-  .rec .text{ flex:1; min-width:0; font-size:15px; line-height:1.6; color:var(--ink); white-space:pre-wrap; word-break:break-word;
+  /* record card */
+  .rec{ position:relative; background:var(--card); border-radius:16px;
+    display:flex; align-items:stretch; gap:12px; padding:13px 15px; margin-bottom:15px; cursor:pointer;
+    box-shadow:0 1px 2px rgba(120,110,60,.05);}
+  .rec .dot{ position:absolute; left:-11px; top:13px; width:22px;height:22px; z-index:1;}
+  .rec-l{ flex:1; min-width:0; display:flex; flex-direction:column;}
+  .rec .meta{ font-family:var(--serif); font-size:13.5px; color:var(--pen);
+    display:flex; gap:13px; align-items:baseline; white-space:nowrap; overflow:hidden; margin-bottom:7px;}
+  .rec .meta .t{font-weight:700;}
+  .rec .text{ flex:1; font-family:var(--hand); font-size:18px; line-height:1.5; color:var(--ink);
+    white-space:pre-wrap; word-break:break-word;
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
-  .rec .thumb{ width:58px;height:58px;border-radius:10px;object-fit:cover; flex-shrink:0; background:var(--accent-soft);}
+  .rec .thumb{ width:82px; align-self:stretch; object-fit:cover; border-radius:12px; flex-shrink:0; background:var(--wd-bg);}
 
-  .empty-state{ text-align:center; color:var(--soft); padding:50px 30px;}
-  .empty-state .big{font-size:46px; margin-bottom:14px;}
-  .empty-state p{font-size:15px; line-height:1.7; margin:4px 0;}
+  .empty-state{ text-align:center; color:var(--soft); padding:40px 30px; font-family:var(--hand);}
+  .empty-state img{height:88px; margin-bottom:14px;}
+  .empty-state p{font-size:17px; line-height:1.7; margin:4px 0;}
 
-  .fab{ position:fixed; right:22px; bottom:calc(26px + env(safe-area-inset-bottom));
-    width:64px;height:64px;border-radius:50%; background:var(--pink); border:none;
-    box-shadow:0 6px 18px rgba(0,0,0,.18); display:flex;align-items:center;justify-content:center; cursor:pointer; z-index:8;}
-  .fab svg{width:26px;height:26px;}
-  .fab:active{transform:scale(.94);}
   .pill{ position:fixed; right:22px; bottom:calc(26px + env(safe-area-inset-bottom));
-    background:var(--accent); color:#fff; border:none; border-radius:30px; padding:16px 22px;
+    background:var(--pen); color:#fff; border:none; border-radius:30px; padding:15px 22px;
     font-size:16px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.18);
     display:none; align-items:center; gap:10px; cursor:pointer; z-index:8; font-variant-numeric:tabular-nums;}
-  .pill .dot{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1.4s infinite;}
+  .pill .pdot{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1.4s infinite;}
   @keyframes blink{50%{opacity:.3;}}
 
-  /* timer */
+  /* ---------- TIMER ---------- */
   #timer{background:var(--bg); flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:40px 30px calc(60px + env(safe-area-inset-bottom));}
   #timer.active{display:flex;}
-  .timer-dog{font-size:64px; margin-bottom:8px;}
-  .timer-hint{color:var(--soft); font-size:15px; margin-bottom:30px; line-height:1.6;}
-  .timer-clock{font-size:60px; font-weight:300; letter-spacing:1px; font-variant-numeric:tabular-nums; margin-bottom:8px;}
+  .timer-dog img{height:120px; margin-bottom:14px;}
+  .timer-hint{color:var(--pen); font-size:16px; margin-bottom:30px; line-height:1.7; font-family:var(--hand);}
+  .timer-clock{font-size:60px; font-weight:300; letter-spacing:1px; font-variant-numeric:tabular-nums; margin-bottom:8px; color:var(--pen);}
   .timer-start{color:var(--soft); font-size:13px; margin-bottom:48px;}
-  .btn-end{ background:var(--dark); color:#fff; border:none; border-radius:18px; padding:18px 0;
+  .btn-end{ background:var(--pen); color:#fff; border:none; border-radius:18px; padding:18px 0;
     width:100%; max-width:300px; font-size:17px; font-weight:600; cursor:pointer; font-family:inherit;}
   .btn-cancel{ background:none; border:none; color:var(--soft); font-size:14px; margin-top:20px; cursor:pointer;}
 
-  /* detail / summary */
+  /* ---------- DETAIL ---------- */
   .topbar{ position:sticky; top:0; background:var(--bg); z-index:5;
-    padding:calc(env(safe-area-inset-top) + 12px) 18px 12px; display:flex; align-items:center; border-bottom:1px solid var(--line);}
-  .back{font-size:16px; background:none;border:none;color:var(--ink); cursor:pointer; padding:6px;}
-  .detail-body{padding:18px 20px calc(40px + env(safe-area-inset-bottom)); max-width:560px; margin:0 auto;}
+    padding:calc(env(safe-area-inset-top) + 12px) 18px 12px; display:flex; align-items:center;}
+  .back{font-size:16px; background:none;border:none;color:var(--pen); cursor:pointer; padding:6px;}
+  .detail-body{padding:12px 24px calc(40px + env(safe-area-inset-bottom)); max-width:520px; margin:0 auto;}
   .witness{ text-align:center; padding:14px 10px 22px;}
-  .witness .w-icon{ width:64px;height:64px;border-radius:50%;background:var(--accent-soft); margin:0 auto 14px;
-    display:flex;align-items:center;justify-content:center;font-size:34px;}
-  .witness .w-line{font-size:19px; line-height:1.5; font-weight:500;}
-  .witness .w-sub{font-size:13px; color:var(--soft); margin-top:8px;}
-  .detail-date{font-size:20px; font-weight:600; margin-bottom:6px;}
-  .detail-meta{font-size:13px; color:var(--soft); margin-bottom:18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+  .witness .w-icon img{ height:70px; margin:0 auto 14px;}
+  .witness .w-line{font-size:21px; line-height:1.5; font-family:var(--hand); color:var(--pen);}
+  .witness .w-sub{font-size:14px; color:var(--soft); margin-top:8px; font-family:var(--hand);}
+  .detail-date{font-family:var(--serif); font-size:22px; font-weight:700; color:var(--pen); margin-bottom:6px;}
+  .detail-meta{font-family:var(--serif); font-size:13.5px; color:var(--pen); margin-bottom:18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
   .label{font-size:13px; color:var(--soft); margin:18px 0 8px;}
   .chips{display:flex; gap:8px; flex-wrap:wrap;}
   .chip{ border:1px solid var(--line); background:var(--card); border-radius:12px; padding:9px 13px;
     font-size:15px; color:var(--ink); cursor:pointer; display:inline-flex; gap:6px; align-items:center; user-select:none;}
-  .chip.sel{ border-color:var(--accent); background:var(--accent-soft);}
+  .chip.sel{ border-color:var(--pen); background:var(--wd-bg);}
   .chip.wx{font-size:20px; padding:7px 12px;}
   .chip input{display:none;}
   .place-input{ width:100%; margin-top:8px; border:1px solid var(--line); border-radius:12px;
     padding:11px 13px; font-size:15px; background:var(--card); font-family:inherit; color:var(--ink);}
   textarea{ width:100%; min-height:110px; resize:none; border:1px solid var(--line); border-radius:14px;
-    padding:14px; font-size:16px; line-height:1.7; background:var(--card); font-family:inherit; color:var(--ink); margin-top:8px;}
-  textarea:focus,.place-input:focus{outline:none;border-color:var(--accent);}
+    padding:14px; font-size:17px; line-height:1.7; background:var(--card); font-family:var(--hand); color:var(--ink); margin-top:8px;}
+  textarea:focus,.place-input:focus{outline:none;border-color:var(--pen);}
   .photo-full{width:100%; border-radius:14px; margin-top:12px; display:none;}
   .save-btn{ width:100%; margin-top:24px; padding:16px; border-radius:14px; border:none;
-    background:var(--accent); color:#fff; font-size:16px; font-weight:600; cursor:pointer; font-family:inherit;}
+    background:var(--pen); color:#fff; font-size:16px; font-weight:600; cursor:pointer; font-family:inherit;}
   .minor-btn{ width:100%; margin-top:12px; padding:12px; border:none; background:none; font-size:14px; cursor:pointer; font-family:inherit;}
   .share-btn{color:var(--soft);} .del-btn{color:#c98b8b;}
 
-  /* calendar */
+  /* ---------- CALENDAR ---------- */
   #cal .detail-body{padding-top:10px;}
   .cal-nav{display:flex; align-items:center; justify-content:space-between; margin:6px 0 16px;}
-  .cal-nav button{background:none;border:none;font-size:20px;color:var(--ink);cursor:pointer;padding:6px 12px;}
-  .cal-title{font-size:17px; font-weight:600;}
+  .cal-nav button{background:none;border:none;font-size:20px;color:var(--pen);cursor:pointer;padding:6px 12px;}
+  .cal-title{font-family:var(--serif); font-size:18px; font-weight:700; color:var(--pen);}
   .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center;}
   .cal-wd{font-size:12px; color:var(--soft); padding:6px 0;}
   .cal-day{ aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:14px;
     border-radius:50%; color:var(--ink); position:relative;}
   .cal-day.empty{color:transparent;}
-  .cal-day.walked{ background:var(--accent); color:#fff; font-weight:600; cursor:pointer;}
-  .cal-day.today{ outline:2px solid var(--accent);}
+  .cal-day.walked{ background:var(--pen); color:#fff; font-weight:600; cursor:pointer;}
+  .cal-day.today{ outline:2px solid var(--pen);}
   .cal-list{margin-top:22px;}
 </style>
 </head>
@@ -135,38 +141,27 @@
 <!-- ===== HOME ===== -->
 <div id="home" class="view active">
   <header>
-    <button class="icon-btn" id="menu" aria-label="改狗狗名字">☰</button>
+    <button class="ic poop" id="menu" aria-label="狗狗名字"><img src="assets/poop.svg" alt=""></button>
     <div class="title">A Little Walk</div>
-    <button class="icon-btn" id="calBtn" aria-label="日历">📅</button>
+    <button class="ic cal" id="calBtn" aria-label="日历"><img src="assets/cal.svg" alt=""></button>
   </header>
   <div class="hero">
-    <div class="status">
-      <div class="status-flower" aria-hidden="true">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <g fill="#F8A0B8">
-            <circle cx="74" cy="50" r="16"/><circle cx="67" cy="67" r="16"/><circle cx="50" cy="74" r="16"/>
-            <circle cx="33" cy="67" r="16"/><circle cx="26" cy="50" r="16"/><circle cx="33" cy="33" r="16"/>
-            <circle cx="50" cy="26" r="16"/><circle cx="67" cy="33" r="16"/>
-          </g>
-          <circle cx="50" cy="50" r="24" fill="#FAAEC2"/>
-          <circle cx="36" cy="56" r="3.6" fill="#FCCBDA"/><circle cx="64" cy="56" r="3.6" fill="#FCCBDA"/>
-          <ellipse cx="42" cy="47" rx="3.1" ry="5" fill="#35543F"/><ellipse cx="58" cy="47" rx="3.1" ry="5" fill="#35543F"/>
-          <path d="M41 57 Q50 68 59 57" stroke="#35543F" stroke-width="3" fill="none" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="status-text" id="statusText"></div>
+    <div class="hero-line" id="heroLine">
+      <img class="today" src="assets/today.svg" alt="Today">
+      <img class="num" src="assets/num.svg" alt="42">
+      <img class="mins" src="assets/mins.svg" alt="mins">
     </div>
+    <div class="hero-dog" id="startDog" aria-label="开始散步"><img src="assets/dog.svg" alt=""></div>
   </div>
   <main>
     <div id="list"></div>
   </main>
-  <button class="fab" id="fab" aria-label="开始散步"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></button>
-  <button class="pill" id="pill"><span class="dot"></span><span id="pillTime">00:00</span> 散步中</button>
+  <button class="pill" id="pill"><span class="pdot"></span><span id="pillTime">00:00</span> 散步中</button>
 </div>
 
 <!-- ===== TIMER ===== -->
 <div id="timer" class="view">
-  <div class="timer-dog">🐕</div>
+  <div class="timer-dog"><img src="assets/dog.svg" alt=""></div>
   <div class="timer-hint">和 <span class="dogname">bonbon</span> 散步中…<br>把手机收起来，回到当下吧</div>
   <div class="timer-clock" id="clock">00:00</div>
   <div class="timer-start" id="startedAt"></div>
@@ -179,7 +174,7 @@
   <div class="topbar"><button class="back" id="back">‹ 返回</button></div>
   <div class="detail-body">
     <div class="witness" id="witness" style="display:none">
-      <div class="w-icon">🐾</div>
+      <div class="w-icon"><img src="assets/dog.svg" alt=""></div>
       <div class="w-line" id="wLine"></div>
       <div class="w-sub">慢慢来，给 <span class="dogname">bonbon</span> 擦完脚再回来写也行～</div>
     </div>
@@ -239,37 +234,33 @@ function sameDay(ts,d){const a=new Date(ts);return a.getFullYear()===d.getFullYe
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function defaultText(e){return `今天和 ${dog} 一起，好好走了 ${durMin(e)} 分钟 🐾`;}
 function warmLine(e){return `今天，你和 ${dog} 一起好好走了 ${durMin(e)} 分钟。`;}
+/* 时段圆点：9点前橙(morning) / 9-17绿(day) / 17后蓝黑(evening) */
 function dotClass(ts){const h=new Date(ts).getHours();return h<9?'morning':(h<17?'day':'evening');}
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0);}
 function setDog(){document.querySelectorAll('.dogname').forEach(el=>el.textContent=dog);}
 
 function recHtml(it){
   const st=startOf(it);
-  const meta=[`🕑 ${fmtClock(st)} 出门`];
-  if(it.weather&&WX[it.weather])meta.push(WX[it.weather]);
-  if(it.place)meta.push('📍'+esc(it.place));
-  meta.push(`🚶 ${durMin(it)}分钟`);
+  const parts=[`<span class="t">${fmtClock(st)} 出门</span>`];
+  if(it.weather&&WXLABEL[it.weather])parts.push(`<span>${WXLABEL[it.weather]}</span>`);
+  if(it.place)parts.push(`<span>${esc(it.place)}</span>`);
+  parts.push(`<span>${durMin(it)}min</span>`);
+  parts.push(`<span>*km</span>`);
   const txt=it.text&&it.text.trim()?esc(it.text):esc(defaultText(it));
   return `<div class="rec" data-id="${it.id}">
-    <span class="dot ${dotClass(st)}"></span>
-    <div class="meta">${meta.join('<span>·</span>')}</div>
-    <div class="rec-main"><div class="text">${txt}</div>${it.photo?`<img class="thumb" src="${it.photo}">`:''}</div></div>`;
+    <img class="dot" src="assets/dot-${dotClass(st)}.svg" alt="">
+    <div class="rec-l"><div class="meta">${parts.join('')}</div><div class="text">${txt}</div></div>
+    ${it.photo?`<img class="thumb" src="${it.photo}">`:''}</div>`;
 }
 
 /* ---------- HOME ---------- */
+function dayKey(ts){const d=new Date(ts);return d.getFullYear()*10000+d.getMonth()*100+d.getDate();}
+function byDayDescTimeAsc(a,b){const k=dayKey(startOf(b))-dayKey(startOf(a));return k!==0?k:startOf(a)-startOf(b);}
 function renderHome(){
-  const items=load().sort((a,b)=>startOf(b)-startOf(a));
-  const today=new Date();
-  const td=items.filter(e=>sameDay(startOf(e),today));
-  if(td.length){
-    const total=td.reduce((s,e)=>s+durMin(e),0);
-    $('statusText').innerHTML=`今天和 ${esc(dog)}<br>散步了 <span class="min">${total}</span> 分钟${td.length>1?` · ${td.length} 次`:''}`;
-  }else{
-    $('statusText').innerHTML=`和 ${esc(dog)}<br>出去走走吧！`;
-  }
+  const items=load().sort(byDayDescTimeAsc);
   const list=$('list');
   if(!items.length){
-    list.innerHTML=`<div class="empty-state"><div class="big">🐾</div><p>还没有散步记录</p><p>点右下角，和 ${esc(dog)} 去走走吧～</p></div>`;
+    list.innerHTML=`<div class="empty-state"><img src="assets/dog.svg" alt=""><p>还没有散步记录</p><p>点上面的小狗，和 ${esc(dog)} 去走走吧～</p></div>`;
   }else{
     let html='', lastKey=null, lastYear=null, open=false;
     for(const it of items){
@@ -279,7 +270,7 @@ function renderHome(){
         if(open)html+=`</div></div>`;
         if(lastYear!==null&&y!==lastYear)html+=`<div class="year">${y}年</div>`;
         lastYear=y; lastKey=key; open=true;
-        html+=`<div class="day"><div class="day-head"><span class="day-date">${d.getMonth()+1}.${d.getDate()}</span><span class="day-wd">${WD1[d.getDay()]}</span></div><div class="day-entries">`;
+        html+=`<div class="day"><div class="day-head"><span class="day-date">${d.getMonth()+1}/${d.getDate()}</span><span class="day-wd">${WD1[d.getDay()]}</span></div><div class="day-entries">`;
       }
       html+=recHtml(it);
     }
@@ -288,7 +279,6 @@ function renderHome(){
     list.querySelectorAll('.rec').forEach(c=>c.onclick=()=>openDetail(c.dataset.id,false));
   }
   const act=getActive();
-  $('fab').style.display=act?'none':'flex';
   $('pill').style.display=act?'flex':'none';
 }
 
@@ -322,7 +312,7 @@ function openDetail(id,fresh){
   $('witness').style.display=fresh?'block':'none';$('dHead').style.display=fresh?'none':'block';
   if(fresh)$('wLine').textContent=warmLine(e);
   $('dDate').innerHTML=`${fmtDate(st)} <span style="color:var(--soft);font-weight:400">${wd(st)}</span>`;
-  $('dMeta').innerHTML=`🕑 ${fmtClock(st)} 出门 · 🚶 ${durMin(e)} 分钟`;
+  $('dMeta').innerHTML=`${fmtClock(st)} 出门 · ${durMin(e)} 分钟`;
   $('wxChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('sel',x.dataset.w===selWeather));
   $('placeInput').value=e.place||'';syncPlaceChips();
   $('dText').value=e.text||'';
@@ -363,13 +353,13 @@ function renderCal(){
   $('calGrid').querySelectorAll('.cal-day.walked').forEach(c=>c.onclick=()=>showDay(+c.dataset.d));
 }
 function showDay(d){
-  const items=load().filter(e=>{const x=new Date(startOf(e));return x.getFullYear()===calY&&x.getMonth()===calM&&x.getDate()===d;}).sort((a,b)=>startOf(b)-startOf(a));
-  $('calList').innerHTML=`<div class="day-head"><span class="day-date">${calM+1}.${d}</span><span class="day-wd">${WD1[new Date(calY,calM,d).getDay()]}</span></div><div class="day-entries">`+items.map(recHtml).join('')+`</div>`;
+  const items=load().filter(e=>{const x=new Date(startOf(e));return x.getFullYear()===calY&&x.getMonth()===calM&&x.getDate()===d;}).sort((a,b)=>startOf(a)-startOf(b));
+  $('calList').innerHTML=`<div class="day-head"><span class="day-date">${calM+1}/${d}</span><span class="day-wd">${WD1[new Date(calY,calM,d).getDay()]}</span></div><div class="day-entries">`+items.map(recHtml).join('')+`</div>`;
   $('calList').querySelectorAll('.rec').forEach(c=>c.onclick=()=>openDetail(c.dataset.id,false));
 }
 
 /* wire */
-$('fab').onclick=startWalk; $('pill').onclick=openTimer;
+$('startDog').onclick=startWalk; $('pill').onclick=openTimer;
 $('endWalk').onclick=endWalk; $('cancelWalk').onclick=cancelWalk;
 $('back').onclick=()=>{renderHome();showView('home');};
 $('save').onclick=saveDetail; $('del').onclick=delDetail;
